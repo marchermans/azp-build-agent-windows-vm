@@ -72,7 +72,7 @@ do {
     $latestRelease = Invoke-RestMethod -Uri "https://api.github.com/repos/microsoft/azure-pipelines-agent/releases"
     $latestRelease = $latestRelease | Where-Object prerelease -eq $PreRelease | where-object assets -ne $null | Sort-Object created_at -Descending | Select-Object -First 1
     $assetsURL = ($latestRelease.assets).browser_download_url
-    $latestReleaseDownloadUrl = ((Invoke-RestMethod -Uri $assetsURL) -match 'win-x64').downloadurl
+    $latestReleaseDownloadUrl = ((Invoke-RestMethod -Uri $assetsURL) | where-object platform -eq 'win-x64' | where name -like 'vsts*').downloadurl
     Invoke-WebRequest -Uri $latestReleaseDownloadUrl -Method Get -OutFile "$agentTempDownloadFilePath"
     Write-Verbose "Downloaded agent successfully on attempt $retries" -verbose
     break
