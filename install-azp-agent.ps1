@@ -68,7 +68,7 @@ do {
   try {
     Write-Verbose "Trying to get download URL for latest azure pipelines agent release..."
     $username = "user";
-    $password = ConvertTo-SecureString –String $PersonalAccessToken –AsPlainText -Force
+    $password = ConvertTo-SecureString –String "$PersonalAccessToken" –AsPlainText -Force
     $credential = New-Object –TypeName "System.Management.Automation.PSCredential" –ArgumentList $username, $password
 
     $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $username,$password)))
