@@ -68,8 +68,6 @@ do {
   try {
     Write-Verbose "Trying to get download URL for latest azure pipelines agent release..."
     $username = "user";
-    $password = ConvertTo-SecureString –String "$PersonalAccessToken" –AsPlainText -Force
-    $credential = New-Object –TypeName "System.Management.Automation.PSCredential" –ArgumentList $username, $password
 
     $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $username,$password)))
 
@@ -77,7 +75,7 @@ do {
     $arch="win-x64"
     $queryUrl="$tfsUrl/_apis/distributedtask/packages/agent?platform=$arch&top=1"
 
-    $latestReleases = Invoke-RestMethod -Method Get -Uri $queryUrl -Headers @{Authorization = "Basic $base64AuthInfo" } -Credential $credential -ContentType "application/json"
+    $latestReleases = Invoke-RestMethod -Method Get -Uri $queryUrl -Headers @{Authorization = "Basic $base64AuthInfo" } -ContentType "application/json"
     $latestReleaseDownloadUrl = $latestReleases.value[0].downloadUrl
 
     Invoke-WebRequest -Uri $latestReleaseDownloadUrl -Method Get -OutFile "$agentTempDownloadFilePath"
