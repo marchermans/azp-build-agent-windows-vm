@@ -26,9 +26,7 @@ Param
   [string]$AgentInstallationPath = 'C:\Azure-Pipelines-Agent',
 
   [Parameter(Mandatory = $false)]
-  [string]$AgentWorkPath = "$AgentInstallationPath\_work",
-
-  [switch]$PreRelease = $false
+  [string]$AgentWorkPath = "$AgentInstallationPath\_work"
 )
 
 $currentLocation = Split-Path -parent $MyInvocation.MyCommand.Definition
@@ -69,10 +67,19 @@ Write-Host "Downloading Azure Pipelines Agent install files."
 do {
   try {
     Write-Verbose "Trying to get download URL for latest azure pipelines agent release..."
-    $latestRelease = Invoke-RestMethod -Uri "https://api.github.com/repos/microsoft/azure-pipelines-agent/releases"
-    $latestRelease = $latestRelease | Where-Object prerelease -eq $PreRelease | where-object assets -ne $null | Sort-Object created_at -Descending | Select-Object -First 1
-    $assetsURL = ($latestRelease.assets).browser_download_url
-    $latestReleaseDownloadUrl = ((Invoke-RestMethod -Uri $assetsURL) | where-object platform -eq 'win-x64' | where name -like 'vsts*').downloadurl
+    $username = "user";
+    $password = ConvertTo-SecureString –String $PersonalAccessToken –AsPlainText -Force
+    $credential = New-Object –TypeName "System.Management.Automation.PSCredential" –ArgumentList $username, $password
+
+    $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $username,$password)))
+
+    $tfsUrl = "https://dev.azure.com/lichtblick"
+    $arch="win-x64"
+    $queryUrl="$tfsUrl/_apis/distributedtask/packages/agent?platform=$arch&top=1"
+
+    $latestReleases = Invoke-RestMethod -Method Get -Uri $queryUrl -Headers @{Authorization = "Basic $base64AuthInfo" } -Credential $credential -ContentType "application/json"
+    $latestReleaseDownloadUrl = $latestReleases.value[0].downloadUrl
+
     Invoke-WebRequest -Uri $latestReleaseDownloadUrl -Method Get -OutFile "$agentTempDownloadFilePath"
     Write-Verbose "Downloaded agent successfully on attempt $retries" -verbose
     break

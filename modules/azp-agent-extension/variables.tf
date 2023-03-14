@@ -52,9 +52,3 @@ variable "agent_work_path" {
   description = "Working directory for agent builds on virtual machine."
   default     = "C:/Azure-Pipelines-Agent/_work"
 }
-
-variable "pre_release" {
-  type        = bool
-  description = "Respects pre release versions for Azure Pipelines agent downloads."
-  default     = false
-}
