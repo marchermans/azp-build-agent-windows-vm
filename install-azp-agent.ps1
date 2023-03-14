@@ -69,7 +69,7 @@ do {
     Write-Verbose "Trying to get download URL for latest azure pipelines agent release..."
     $username = "user";
 
-    $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $username,$password)))
+    $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $username,$PersonalAccessToken)))
 
     $tfsUrl = "https://dev.azure.com/lichtblick"
     $arch="win-x64"
