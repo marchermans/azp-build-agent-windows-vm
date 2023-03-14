@@ -21,7 +21,7 @@ resource "azurerm_virtual_machine_extension" "azp_agent_install_agent" {
   settings = <<SETTINGS
     {
       "fileUris": [
-        "https://raw.githubusercontent.com/lichtblick/azp-build-agent-windows-vm/master/install-azp-agent.ps1"
+        "https://raw.githubusercontent.com/marchermans/azp-build-agent-windows-vm/master/install-azp-agent.ps1"
       ]
     }
 SETTINGS
